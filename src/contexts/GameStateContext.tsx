@@ -161,14 +161,15 @@ const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
 // Provider component
 interface GameProviderProps {
   children: ReactNode;
+  mode?: 'singleplayer' | 'multiplayer';
 }
 
-export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
+export const GameProvider: React.FC<GameProviderProps> = ({ children, mode = 'singleplayer' }) => {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
 
-  // Handle AI move when it's the AI's turn (O player)
+  // Handle AI move when it's the AI's turn (O player) - only in singleplayer mode
   React.useEffect(() => {
-    if (state.currentPlayer === 'O' && state.phase !== 'GAME_OVER') {
+    if (mode === 'singleplayer' && state.currentPlayer === 'O' && state.phase !== 'GAME_OVER') {
       // Add a small delay to make the AI move feel more natural
       const timer = setTimeout(() => {
         const ai = new MinimaxAI('O');
@@ -191,7 +192,7 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children }) => {
 
       return () => clearTimeout(timer);
     }
- }, [state]);
+ }, [state, mode]);
 
   return (
     <GameContext.Provider value={{ state, dispatch }}>

@@ -2,7 +2,11 @@ import React from 'react';
 import { useGame } from '../../contexts/GameStateContext';
 import CoinToss from './CoinToss';
 
-const GameUI: React.FC = () => {
+interface GameUIProps {
+  mode?: 'singleplayer' | 'multiplayer';
+}
+
+const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
   const { state, dispatch } = useGame();
 
   const handleReset = () => {
@@ -17,15 +21,15 @@ const GameUI: React.FC = () => {
     if (state.winner === 'DRAW') {
       statusMessage = "It's a draw!";
     } else {
-      statusMessage = state.winner === 'X' ? 'You win!' : 'AI wins!';
+      statusMessage = state.winner === 'X' ? (mode === 'multiplayer' ? 'Player X wins!' : 'You win!') : (mode === 'multiplayer' ? 'Player O wins!' : 'AI wins!');
     }
  } else if (state.phase === 'PLACING') {
-    statusMessage = state.currentPlayer === 'X' ? 'Your turn (place a piece)' : 'AI thinking...';
+    statusMessage = state.currentPlayer === 'X' ? (mode === 'multiplayer' ? 'Player X\'s turn' : 'Your turn (place a piece)') : (mode === 'multiplayer' ? 'Player O\'s turn' : 'AI thinking...');
   } else if (state.phase === 'MOVING') {
     if (state.selectedCell !== null) {
-      statusMessage = state.currentPlayer === 'X' ? 'Your turn (move selected piece)' : 'AI thinking...';
+      statusMessage = state.currentPlayer === 'X' ? (mode === 'multiplayer' ? 'Player X\'s turn (move selected piece)' : 'Your turn (move selected piece)') : (mode === 'multiplayer' ? 'Player O\'s turn' : 'AI thinking...');
     } else {
-      statusMessage = state.currentPlayer === 'X' ? 'Your turn (select a piece to move)' : 'AI thinking...';
+      statusMessage = state.currentPlayer === 'X' ? (mode === 'multiplayer' ? 'Player X\'s turn (select a piece to move)' : 'Your turn (select a piece to move)') : (mode === 'multiplayer' ? 'Player O\'s turn' : 'AI thinking...');
     }
  }
 
@@ -36,11 +40,11 @@ const GameUI: React.FC = () => {
         <div className="w-full flex justify-between items-center mb-2">
           <div className="text-lg font-semibold flex items-center">
             <span className="w-4 h-4 rounded-full bg-blue-600 mr-2"></span>
-            Player
+            {mode === 'multiplayer' ? 'Player 1' : 'Player'}
           </div>
           <div className="text-lg font-semibold flex items-center">
             <span className="w-4 h-4 rounded-full bg-red-600 mr-2"></span>
-            AI
+            {mode === 'multiplayer' ? 'Player 2' : 'AI'}
           </div>
         </div>
       )}

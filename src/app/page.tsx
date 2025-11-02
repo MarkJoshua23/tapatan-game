@@ -32,12 +32,12 @@ export default function Home() {
               </div>
             </div>
             
-            <button 
-              className="w-full py-4 px-6 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-semibold rounded-xl shadow-md cursor-not-allowed opacity-60"
-              disabled
+            <Link
+              href="/tapatan/multiplayer"
+              className="block w-full py-4 px-6 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl shadow-md transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
             >
-              Multiplayer (Coming Soon)
-            </button>
+              Multiplayer
+            </Link>
           </div>
         </div>
 
