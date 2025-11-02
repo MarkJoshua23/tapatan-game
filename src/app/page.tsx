@@ -1,57 +1,50 @@
-import Image from "next/image";
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            Tapatan Game
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Play the traditional Filipino three-in-a-row game.{" "}
-            <a
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-4">
+      <div className="w-full max-w-md mx-auto text-center">
+        <header className="mb-10">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 dark:text-white mb-4">Tapatan</h1>
+          <p className="text-gray-600 dark:text-gray-300 text-lg">Traditional Filipino Three-in-a-Row Game</p>
+        </header>
+
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+          <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-8">Choose Game Mode</h2>
+          
+          <div className="space-y-5">
+            <Link 
               href="/tapatan"
-              className="font-medium text-blue-600 dark:text-blue-400 underline"
+              className="block w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
-              Play Now
-            </a>
-          </p>
+              Single Player
+            </Link>
+            
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-4 bg-white dark:bg-gray-800 text-gray-50 dark:text-gray-400 text-sm">or</span>
+              </div>
+            </div>
+            
+            <button 
+              className="w-full py-4 px-6 bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 font-semibold rounded-xl shadow-md cursor-not-allowed opacity-60"
+              disabled
+            >
+              Multiplayer (Coming Soon)
+            </button>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div className="text-center text-gray-500 dark:text-gray-400 text-sm">
+          <p>Experience the traditional Filipino strategy game. Challenge an AI opponent or play with a friend.</p>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
