@@ -6,10 +6,11 @@ interface GameBoardProps {
  onCellClick: (index: number) => void;
   selectedCell: number | null;
   possibleMoves: number[];
+  winningPattern?: number[] | null;
   disabled: boolean;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell, possibleMoves, disabled }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell, possibleMoves, winningPattern, disabled }) => {
   // Calculate positions for the Tapatan board
   // The board layout should be:
   // (0)---(1)---(2)
@@ -110,6 +111,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell,
         {positions.map((pos, index) => {
           const isSelected = selectedCell === index;
           const isPossibleMove = possibleMoves.includes(index);
+          const isWinningPiece = winningPattern && winningPattern.includes(index);
           const cellValue = board[index];
           
           return (
@@ -124,8 +126,8 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell,
                 cy={`${pos.y}%`}
                 r="5.5"
                 fill={isSelected ? "#FBBF24" : isPossibleMove ? "#FEF3C7" : "#F3F4F6"} // amber-40 when selected, amber-200 for possible moves, gray-100 otherwise
-                stroke={isSelected ? "#F59E0B" : isPossibleMove ? "#F59E0B" : "#9CA3AF"} // amber-500 when selected or possible move, gray-40 otherwise
-                strokeWidth={isSelected || isPossibleMove ? "2" : "1.5"}
+                stroke={isSelected ? "#F59E0B" : isWinningPiece ? "#FFD700" : isPossibleMove ? "#F59E0B" : "#9CA3AF"} // amber-500 when selected, gold for winning pieces, amber-500 for possible moves, gray-40 otherwise
+                strokeWidth={isSelected || isWinningPiece || isPossibleMove ? "2" : "1.5"}
               />
               
               {/* Draw the player piece if present */}
@@ -134,7 +136,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell,
                   cx={`${pos.x}%`}
                   cy={`${pos.y}%`}
                   r="3.5"
-                  fill={getPlayerColor(cellValue)}
+                  fill={getPlayerColor(cellValue)} // Retain original colors for winning pieces
                 />
               )}
             </g>

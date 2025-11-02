@@ -64,6 +64,7 @@ const TapatanGameContent: React.FC = () => {
               onCellClick={handleCellClick}
               selectedCell={state.selectedCell}
               possibleMoves={possibleMoves}
+              winningPattern={state.winningPattern}
               disabled={state.currentPlayer !== 'X' || !!state.winner}
             />
           </div>

@@ -23,7 +23,7 @@ export const BOARD_CONNECTIONS: number[][] = [
 ];
 
 // Check if a player has won
-export function checkWinner(board: BoardState): Player {
+export function checkWinner(board: BoardState): { winner: Player; winningPattern: number[] | null } {
   // Check all possible winning combinations
   const winPatterns = [
     [0, 1, 2], // Top row
@@ -39,11 +39,11 @@ export function checkWinner(board: BoardState): Player {
   for (const pattern of winPatterns) {
     const [a, b, c] = pattern;
     if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-      return board[a];
+      return { winner: board[a], winningPattern: pattern };
     }
   }
 
-  return null;
+  return { winner: null, winningPattern: null };
 }
 
 // Check if the board is full (for placing phase)

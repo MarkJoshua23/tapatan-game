@@ -6,6 +6,7 @@ export type GameStatus = {
   currentPlayer: 'X' | 'O';
   phase: GamePhase;
   winner: 'X' | 'O' | 'DRAW' | null;
+  winningPattern: number[] | null;
   selectedCell: number | null;
   playerPieces: { X: number; O: number };
 };

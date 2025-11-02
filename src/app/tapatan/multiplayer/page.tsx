@@ -64,11 +64,12 @@ const MultiplayerGameContent: React.FC = () => {
           <GameUI mode="multiplayer" />
           
           <div className="my-6 flex justify-center">
-            <GameBoard 
+            <GameBoard
               board={state.board}
               onCellClick={handleCellClick}
               selectedCell={state.selectedCell}
               possibleMoves={possibleMoves}
+              winningPattern={state.winningPattern}
               disabled={!!state.winner || state.phase === 'GAME_OVER'}
             />
           </div>

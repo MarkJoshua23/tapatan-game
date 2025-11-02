@@ -26,6 +26,7 @@ const initialGameState: GameStatus = {
   currentPlayer: 'X', // Will be determined by coin toss
   phase: 'COIN_TOSS', // New phase for coin toss
   winner: null,
+  winningPattern: null,
   selectedCell: null,
   playerPieces: { X: 3, O: 3 }, // Each player starts with 3 pieces
 };
@@ -44,6 +45,7 @@ const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
       let newSelectedCell = null;
       let newPlayerPieces = { ...playerPieces };
       let newWinner = state.winner;
+      let winningPattern = null;
 
       if (phase === 'PLACING') {
         // Place a piece on the board
@@ -60,7 +62,9 @@ const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
           }
           
           // Check for winner after the move
-          newWinner = checkWinner(newBoard);
+          const winnerResult = checkWinner(newBoard);
+          newWinner = winnerResult.winner;
+          winningPattern = winnerResult.winningPattern;
           
           // Switch player if no winner
           if (!newWinner) {
@@ -78,7 +82,9 @@ const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
             newSelectedCell = null;
             
             // Check for winner after the move
-            newWinner = checkWinner(newBoard);
+            const winnerResult = checkWinner(newBoard);
+            newWinner = winnerResult.winner;
+            winningPattern = winnerResult.winningPattern;
             
             // Switch player if no winner
             if (!newWinner) {
@@ -108,6 +114,7 @@ const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
         currentPlayer: newCurrentPlayer,
         phase: newPhase,
         winner: newWinner,
+        winningPattern: newWinner ? winningPattern : null,
         selectedCell: newSelectedCell,
         playerPieces: newPlayerPieces,
       };

@@ -51,6 +51,10 @@ const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
       
       {state.phase === 'COIN_TOSS' ? (
         <CoinToss onResult={(result) => dispatch({ type: 'START_GAME', payload: { firstPlayer: result } })} />
+      ) : state.winner ? (
+        <div className="w-full text-center py-4 px-6 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg transform scale-105 transition-transform duration-300">
+          <h2 className="text-xl md:text-2xl font-bold text-gray-900 drop-shadow-md">{statusMessage}</h2>
+        </div>
       ) : (
         <div className="w-full text-center py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-xl shadow-sm">
           <h2 className="text-lg md:text-xl font-semibold text-gray-80 dark:text-gray-200">{statusMessage}</h2>
