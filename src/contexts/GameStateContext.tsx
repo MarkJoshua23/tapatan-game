@@ -8,7 +8,8 @@ type GameAction =
   | { type: 'MAKE_MOVE'; payload: { index: number } }
  | { type: 'SELECT_CELL'; payload: { index: number } }
   | { type: 'RESET_GAME' }
-  | { type: 'SET_CURRENT_PLAYER'; payload: { player: 'X' | 'O' } };
+  | { type: 'SET_CURRENT_PLAYER'; payload: { player: 'X' | 'O' } }
+  | { type: 'START_GAME'; payload: { firstPlayer: 'X' | 'O' } };
 
 // Game context type
 interface GameContextType {
@@ -22,8 +23,8 @@ const GameContext = createContext<GameContextType | undefined>(undefined);
 // Initial game state
 const initialGameState: GameStatus = {
   board: createEmptyBoard(),
-  currentPlayer: 'X', // Human player is X
-  phase: 'PLACING',
+  currentPlayer: 'X', // Will be determined by coin toss
+  phase: 'COIN_TOSS', // New phase for coin toss
   winner: null,
   selectedCell: null,
   playerPieces: { X: 3, O: 3 }, // Each player starts with 3 pieces
@@ -142,6 +143,15 @@ const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
         ...initialGameState,
         board: createEmptyBoard(),
       };
+      
+    case 'START_GAME': {
+      const { firstPlayer } = action.payload;
+      return {
+        ...state,
+        currentPlayer: firstPlayer,
+        phase: 'PLACING',
+      };
+    }
 
     default:
       return state;

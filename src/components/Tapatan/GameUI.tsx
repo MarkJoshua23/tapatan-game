@@ -1,5 +1,6 @@
 import React from 'react';
 import { useGame } from '../../contexts/GameStateContext';
+import CoinToss from './CoinToss';
 
 const GameUI: React.FC = () => {
   const { state, dispatch } = useGame();
@@ -10,7 +11,9 @@ const GameUI: React.FC = () => {
 
   // Determine game status message
  let statusMessage = '';
-  if (state.winner) {
+  if (state.phase === 'COIN_TOSS') {
+    statusMessage = 'Who goes first?';
+  } else if (state.winner) {
     if (state.winner === 'DRAW') {
       statusMessage = "It's a draw!";
     } else {
@@ -26,23 +29,29 @@ const GameUI: React.FC = () => {
     }
  }
 
-  return (
+ return (
     <div className="w-full max-w-md flex flex-col items-center gap-5">
       
-      <div className="w-full flex justify-between items-center mb-2">
-        <div className="text-lg font-semibold flex items-center">
-          <span className="w-4 h-4 rounded-full bg-blue-600 mr-2"></span>
-          Player
+      {state.phase !== 'COIN_TOSS' && (
+        <div className="w-full flex justify-between items-center mb-2">
+          <div className="text-lg font-semibold flex items-center">
+            <span className="w-4 h-4 rounded-full bg-blue-600 mr-2"></span>
+            Player
+          </div>
+          <div className="text-lg font-semibold flex items-center">
+            <span className="w-4 h-4 rounded-full bg-red-600 mr-2"></span>
+            AI
+          </div>
         </div>
-        <div className="text-lg font-semibold flex items-center">
-          <span className="w-4 h-4 rounded-full bg-red-600 mr-2"></span>
-          AI
-        </div>
-      </div>
+      )}
       
-      <div className="w-full text-center py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-xl shadow-sm">
-        <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-gray-200">{statusMessage}</h2>
-      </div>
+      {state.phase === 'COIN_TOSS' ? (
+        <CoinToss onResult={(result) => dispatch({ type: 'START_GAME', payload: { firstPlayer: result } })} />
+      ) : (
+        <div className="w-full text-center py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-xl shadow-sm">
+          <h2 className="text-lg md:text-xl font-semibold text-gray-80 dark:text-gray-200">{statusMessage}</h2>
+        </div>
+      )}
       
       <div className="w-full flex justify-center mt-2">
         <button
