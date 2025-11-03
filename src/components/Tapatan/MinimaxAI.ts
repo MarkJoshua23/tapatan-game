@@ -1,13 +1,19 @@
 import { BoardState, Player, GamePhase } from '../../types/tapatan';
 import { checkWinner, getGamePhase, getPossibleMoves } from '../../lib/game-logic';
 
-const DEPTH_LIMIT = 8; // Increase depth for better strategy
+const DIFFICULTY_SETTINGS = {
+  easy: { depthLimit: 4, name: "Easy" },
+  medium: { depthLimit: 6, name: "Medium" },
+  hard: { depthLimit: 8, name: "Hard" }
+};
 
 export class MinimaxAI {
   private player: Player;
+  private difficulty: keyof typeof DIFFICULTY_SETTINGS;
   
-  constructor(player: Player) {
+  constructor(player: Player, difficulty: keyof typeof DIFFICULTY_SETTINGS = 'medium') {
     this.player = player;
+    this.difficulty = difficulty;
   }
 
   // Main method to get the best move for the AI
@@ -70,8 +76,9 @@ export class MinimaxAI {
       return 0;
     }
     
-    // Depth limit reached
-    if (depth >= DEPTH_LIMIT) {
+    // Depth limit reached based on difficulty
+    const depthLimit = DIFFICULTY_SETTINGS[this.difficulty].depthLimit;
+    if (depth >= depthLimit) {
       return this.evaluateBoard(board);
     }
     
@@ -200,5 +207,10 @@ export class MinimaxAI {
     }
     
     return score;
+  }
+  
+  // Get difficulty name for display
+  public getDifficultyName(): string {
+    return DIFFICULTY_SETTINGS[this.difficulty].name;
   }
 }

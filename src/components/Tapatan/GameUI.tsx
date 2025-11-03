@@ -32,8 +32,21 @@ const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
       statusMessage = state.currentPlayer === 'X' ? (mode === 'multiplayer' ? 'Player X\'s turn (select a piece to move)' : 'Your turn (select a piece to move)') : (mode === 'multiplayer' ? 'Player O\'s turn' : 'AI thinking...');
     }
  }
+ 
+ // Get difficulty for singleplayer mode
+ let difficultyText = '';
+ if (mode === 'singleplayer') {
+   const urlParams = new URLSearchParams(window.location.search);
+   const difficulty = urlParams.get('difficulty') || 'medium';
+   const difficultyNames: Record<string, string> = {
+     'easy': 'Easy',
+     'medium': 'Medium',
+     'hard': 'Hard'
+   };
+   difficultyText = `Difficulty: ${difficultyNames[difficulty] || 'Medium'}`;
+ }
 
- return (
+  return (
     <div className="w-full max-w-md flex flex-col items-center gap-5">
       
       {state.phase !== 'COIN_TOSS' && (
@@ -49,11 +62,18 @@ const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
         </div>
       )}
       
+      {/* Display difficulty for singleplayer mode */}
+      {mode === 'singleplayer' && state.phase !== 'COIN_TOSS' && !state.winner && (
+        <div className="w-full text-center py-2 px-4 bg-gray-100 dark:bg-gray-700 rounded-lg shadow-sm">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{difficultyText}</h3>
+        </div>
+      )}
+      
       {state.phase === 'COIN_TOSS' ? (
         <CoinToss onResult={(result) => dispatch({ type: 'START_GAME', payload: { firstPlayer: result } })} />
       ) : state.winner ? (
-        <div className="w-full text-center py-4 px-6 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg transform scale-105 transition-transform duration-300">
-          <h2 className="text-xl md:text-2xl font-bold text-gray-900 drop-shadow-md">{statusMessage}</h2>
+        <div className="w-full text-center py-5 px-6 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg transform scale-105 transition-transform duration-300">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 drop-shadow-md">{statusMessage}</h2>
         </div>
       ) : (
         <div className="w-full text-center py-3 px-4 bg-gray-100 dark:bg-gray-700 rounded-xl shadow-sm">

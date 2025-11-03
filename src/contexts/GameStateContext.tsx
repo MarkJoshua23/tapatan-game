@@ -179,7 +179,11 @@ export const GameProvider: React.FC<GameProviderProps> = ({ children, mode = 'si
     if (mode === 'singleplayer' && state.currentPlayer === 'O' && state.phase !== 'GAME_OVER') {
       // Add a small delay to make the AI move feel more natural
       const timer = setTimeout(() => {
-        const ai = new MinimaxAI('O');
+        // Get difficulty from URL parameter or default to medium
+        const urlParams = new URLSearchParams(window.location.search);
+        const difficulty = urlParams.get('difficulty') || 'medium';
+        
+        const ai = new MinimaxAI('O', difficulty as any);
         const aiMove = ai.getBestMove(state.board, state.phase);
         
         if (aiMove.to !== -1) {

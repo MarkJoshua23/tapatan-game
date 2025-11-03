@@ -16,8 +16,8 @@ export default function Home() {
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-8">Choose Game Mode</h2>
           
           <div className="space-y-5">
-            <Link 
-              href="/tapatan"
+            <Link
+              href="/tapatan/difficulty"
               className="block w-full py-4 px-6 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition-all duration-200 transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
             >
               Single Player
