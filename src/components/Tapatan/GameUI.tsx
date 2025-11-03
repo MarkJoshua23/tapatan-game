@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGame } from '../../contexts/GameStateContext';
+import { useGameStore } from '../../stores/gameStore';
 import CoinToss from './CoinToss';
 
 interface GameUIProps {
@@ -7,10 +7,12 @@ interface GameUIProps {
 }
 
 const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
-  const { state, dispatch } = useGame();
+  const state = useGameStore();
+  const resetGame = useGameStore(state => state.resetGame);
+  const startGame = useGameStore(state => state.startGame);
 
   const handleReset = () => {
-    dispatch({ type: 'RESET_GAME' });
+    resetGame();
   };
 
   // Determine game status message
@@ -70,7 +72,7 @@ const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
       )}
       
       {state.phase === 'COIN_TOSS' ? (
-        <CoinToss onResult={(result) => dispatch({ type: 'START_GAME', payload: { firstPlayer: result } })} />
+        <CoinToss onResult={(result) => startGame(result)} />
       ) : state.winner ? (
         <div className="w-full text-center py-5 px-6 bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-xl shadow-lg transform scale-105 transition-transform duration-300">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 drop-shadow-md">{statusMessage}</h2>

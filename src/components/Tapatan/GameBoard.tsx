@@ -1,16 +1,25 @@
 import React from "react";
 import { BoardState, Player } from "../../types/tapatan";
+import { BOARD_CONNECTIONS } from "../../lib/game-logic";
+
+import { useGameStore } from '../../stores/gameStore';
 
 interface GameBoardProps {
-  board: BoardState;
- onCellClick: (index: number) => void;
-  selectedCell: number | null;
-  possibleMoves: number[];
+  possibleMoves?: number[];
   winningPattern?: number[] | null;
   disabled: boolean;
 }
 
-const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell, possibleMoves, winningPattern, disabled }) => {
+const GameBoard: React.FC<GameBoardProps> = ({ disabled }) => {
+  const state = useGameStore();
+  const makeMove = useGameStore(state => state.makeMove);
+  const selectCell = useGameStore(state => state.selectCell);
+  
+  const { board, selectedCell, winningPattern } = state;
+  const possibleMoves = state.selectedCell !== null && state.phase === 'MOVING'
+    ? BOARD_CONNECTIONS[state.selectedCell].filter(index => state.board[index] === null)
+    : [];
+  
   // Calculate positions for the Tapatan board
   // The board layout should be:
   // (0)---(1)---(2)
@@ -24,7 +33,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell,
   // Define coordinates for each position
  const positions = [
     { x: 15, y: 15 },    // Position 0 (top-left)
-    { x: 50, y: 15 },    // Position 1 (top-center) 
+    { x: 50, y: 15 },    // Position 1 (top-center)
     { x: 85, y: 15 },    // Position 2 (top-right)
     { x: 15, y: 50 },    // Position 3 (middle-left)
     { x: 50, y: 50 },    // Position 4 (center)
@@ -61,9 +70,28 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell,
 
   // Get player color
  const getPlayerColor = (player: Player) => {
-    if (player === 'X') return '#2563EB'; // blue-60
+    if (player === 'X') return '#2563EB'; // blue-600
     if (player === 'O') return '#DC2626'; // red-600
     return '#0000';
+  };
+  
+  const handleCellClick = (index: number) => {
+    if (!disabled) {
+      // Call the appropriate action based on game state
+      if (state.phase === 'MOVING' && state.selectedCell === index) {
+        // If clicking the same selected cell, deselect it
+        selectCell(-1);
+      } else if (state.phase === 'MOVING' && state.selectedCell !== null && possibleMoves.includes(index)) {
+        // If a cell is selected and this is a valid move, make the move
+        makeMove(index);
+      } else if (state.board[index] === state.currentPlayer) {
+        // If clicking own piece, select it
+        selectCell(index);
+      } else if (state.phase === 'PLACING' && state.board[index] === null) {
+        // If in placing phase and position is empty, place piece
+        makeMove(index);
+      }
+    }
   };
 
   return (
@@ -117,7 +145,7 @@ const GameBoard: React.FC<GameBoardProps> = ({ board, onCellClick, selectedCell,
           return (
             <g
               key={index}
-              onClick={() => !disabled && onCellClick(index)}
+              onClick={() => handleCellClick(index)}
               style={{ cursor: disabled || cellValue ? 'default' : 'pointer' }}
             >
               {/* Draw the cell background circle */}

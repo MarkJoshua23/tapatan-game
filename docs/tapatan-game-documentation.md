@@ -61,7 +61,7 @@ A player wins by forming three of their pieces in a continuous line:
 
 The Tapatan game follows a modern React architecture with TypeScript, utilizing:
 - Next.js 13+ App Router
-- React Context API for state management
+- Zustand for state management
 - TypeScript for type safety
 - Tailwind CSS for styling
 - SVG for game board rendering
@@ -95,8 +95,8 @@ src/
 │       ├── GameUI.tsx           # Game controls and status display
 │       ├── CoinToss.tsx         # Coin toss animation component
 │       └── MinimaxAI.ts         # AI opponent implementation
-├── contexts/
-│   └── GameStateContext.tsx     # Game state management
+├── stores/
+│   └── gameStore.ts             # Zustand game state management
 ├── lib/
 │   └── game-logic.ts            # Core game logic functions
 ├── types/
@@ -153,16 +153,15 @@ src/
 
 1. **User Interaction**: Player clicks on a board cell
 2. **Event Handler**: Game page handles the click event
-3. **Action Dispatch**: Dispatches MAKE_MOVE or SELECT_CELL action to GameStateContext
-4. **State Update**: Game reducer processes the action and updates game state
-5. **UI Re-render**: Components re-render with new state
-6. **AI Response**: If it's AI's turn, useEffect triggers AI move after delay
-7. **AI Action**: AI dispatches its move through the same flow
+3. **State Update**: Calls appropriate Zustand action (makeMove or selectCell)
+4. **UI Re-render**: Components re-render with new state using selector functions
+5. **AI Response**: If it's AI's turn, useEffect triggers AI move after delay
+6. **AI Action**: AI calls appropriate Zustand action to make its move
 
 ### State Management Flow
 
 ```
-Initial State → User Action → Reducer → New State → Context Provider → Components
+Initial State → User Action → Zustand Store → New State → Components
                                            ↑
                                     AI Effect ──────┘
 ```
@@ -172,13 +171,13 @@ Initial State → User Action → Reducer → New State → Context Provider →
 ```
 App/Page Components
     ↓ (props)
-GameStateContext Provider
-    ↓ (context)
+useGameStore Hook
+    ↓ (selector functions)
 GameUI (displays status)
-    ↓ (props)
+    ↓ (store access)
 GameBoard (renders board)
-    ↓ (props/callbacks)
-GameCell (individual cells)
+    ↓ (store access)
+Individual board elements
 ```
 
 ## Game Logic Implementation
@@ -327,12 +326,15 @@ The AI evaluates board positions based on:
 
 ## State Management
 
-### Context API Pattern
+### Zustand Implementation
 
-The game uses React Context API for centralized state management:
+The game now uses Zustand for centralized state management, which provides a simpler and more performant solution than React Context:
 
 ```typescript
-interface GameStatus {
+import { create } from 'zustand';
+
+interface GameState {
+  // State properties
   board: BoardState;
   currentPlayer: 'X' | 'O';
   phase: GamePhase;
@@ -340,13 +342,60 @@ interface GameStatus {
   winningPattern: number[] | null;
   selectedCell: number | null;
   playerPieces: { X: number; O: number };
+  
+  // Game mode
+  mode: 'singleplayer' | 'multiplayer';
+  
+  // Actions
+  makeMove: (index: number) => void;
+  selectCell: (index: number) => void;
+  resetGame: () => void;
+  setCurrentPlayer: (player: 'X' | 'O') => void;
+  startGame: (firstPlayer: 'X' | 'O') => void;
+  setMode: (mode: 'singleplayer' | 'multiplayer') => void;
 }
 
-type GameAction =
-  | { type: 'MAKE_MOVE'; payload: { index: number } }
-  | { type: 'SELECT_CELL'; payload: { index: number } }
-  | { type: 'RESET_GAME' }
-  | { type: 'SET_CURRENT_PLAYER'; payload: { player: 'X' | 'O' } };
+export const useGameStore = create<GameState>()((set, get) => ({
+  // Initial state
+  board: createEmptyBoard(),
+  currentPlayer: 'X',
+  phase: 'COIN_TOSS',
+  winner: null,
+  winningPattern: null,
+  selectedCell: null,
+  playerPieces: { X: 3, O: 3 },
+  mode: 'singleplayer',
+  
+  // Actions implementation
+  makeMove: (index: number) => set((state) => {
+    // Implementation details...
+  }),
+  
+  selectCell: (index: number) => set((state) => {
+    // Implementation details...
+  }),
+  
+  resetGame: () => set({
+    board: createEmptyBoard(),
+    currentPlayer: 'X',
+    phase: 'COIN_TOSS',
+    winner: null,
+    winningPattern: null,
+    selectedCell: null,
+    playerPieces: { X: 3, O: 3 },
+    mode: 'singleplayer',
+  }),
+  
+  // Other actions...
+}));
+```
+
+### Benefits of Using Zustand
+1. **Simpler API**: Less boilerplate compared to React Context + useReducer
+2. **Better Performance**: Fine-grained reactivity with automatic memoization
+3. **Easier Testing**: Store can be imported and tested directly
+4. **DevTools Support**: Built-in Redux DevTools integration
+5. **Middleware Support**: Easy to add logging, persistence, etc.
 ```
 
 ### Reducer Pattern
@@ -419,4 +468,4 @@ The game supports modern browsers that support:
 
 This Tapatan implementation combines traditional game design principles with modern web development practices. The architecture is scalable, maintainable, and provides an excellent user experience while staying true to the original game's rules and spirit.
 
-The use of React Context for state management, TypeScript for type safety, and Tailwind CSS for styling creates a robust foundation that can be easily extended or modified. The AI implementation using the minimax algorithm provides challenging gameplay at multiple difficulty levels.
+The use of Zustand for state management, TypeScript for type safety, and Tailwind CSS for styling creates a robust foundation that can be easily extended or modified. The AI implementation using the minimax algorithm provides challenging gameplay at multiple difficulty levels. Zustand offers several advantages over React Context including reduced boilerplate, better performance with fine-grained reactivity, and easier testing capabilities.
