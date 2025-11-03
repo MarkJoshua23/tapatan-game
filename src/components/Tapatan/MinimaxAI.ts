@@ -1,7 +1,7 @@
 import { BoardState, Player, GamePhase } from '../../types/tapatan';
-import { checkWinner, getGamePhase, getPossibleMoves, isValidMove } from '../../lib/game-logic';
+import { checkWinner, getGamePhase, getPossibleMoves } from '../../lib/game-logic';
 
-const DEPTH_LIMIT = 6; // Limit depth to make moves faster
+const DEPTH_LIMIT = 8; // Increase depth for better strategy
 
 export class MinimaxAI {
   private player: Player;
@@ -29,7 +29,7 @@ export class MinimaxAI {
     
     for (const move of moves) {
       // Make the move temporarily
-      const newBoard = [...board];
+      const newBoard = [...board] as BoardState;
       if (phase === 'PLACING') {
         newBoard[move.to] = this.player;
       } else if (phase === 'MOVING' && move.from !== null) {
@@ -59,9 +59,9 @@ export class MinimaxAI {
   ): number {
     // Check if game is over
     const winner = checkWinner(board);
-    if (winner === this.player) {
+    if (winner.winner === this.player) {
       return 10000 - depth; // Prefer faster wins
-    } else if (winner !== null) {
+    } else if (winner.winner !== null) {
       return -10000 + depth; // Prefer slower losses
     }
     
@@ -81,7 +81,7 @@ export class MinimaxAI {
     if (isMaximizing) {
       let maxEval = -Infinity;
       for (const move of moves) {
-        const newBoard = [...board];
+        const newBoard = [...board] as BoardState;
         if (currentPhase === 'PLACING') {
           newBoard[move.to] = player;
         } else if (currentPhase === 'MOVING' && move.from !== null) {
@@ -109,7 +109,7 @@ export class MinimaxAI {
     } else {
       let minEval = Infinity;
       for (const move of moves) {
-        const newBoard = [...board];
+        const newBoard = [...board] as BoardState;
         if (currentPhase === 'PLACING') {
           newBoard[move.to] = player;
         } else if (currentPhase === 'MOVING' && move.from !== null) {
@@ -138,7 +138,7 @@ export class MinimaxAI {
   }
 
   private evaluateBoard(board: BoardState): number {
-    // Simple evaluation: count potential winning lines
+    // More sophisticated evaluation: count potential winning lines and immediate threats
     let score = 0;
     
     // Check all possible winning lines
@@ -152,26 +152,51 @@ export class MinimaxAI {
       const [a, b, c] = pattern;
       const line = [board[a], board[b], board[c]];
       
-      // Count how many pieces the AI has in this line
+      // Count how many pieces each player has in this line
       const aiPieces = line.filter(cell => cell === this.player).length;
       const opponentPieces = line.filter(cell => cell !== null && cell !== this.player).length;
+      const emptySpaces = line.filter(cell => cell === null).length;
       
-      // If the line is blocked by opponent, skip it
-      if (aiPieces > 0 && opponentPieces === 0) {
-        // AI has pieces in this line, but not blocked by opponent
-        if (aiPieces === 2) {
-          score += 100; // Two in a row is good
-        } else {
-          score += 10; // One piece in a potential line is ok
-        }
-      } else if (opponentPieces > 0 && aiPieces === 0) {
-        // Opponent has pieces in this line
-        if (opponentPieces === 2) {
-          score -= 50; // Opponent has two in a row, block them
-        } else {
-          score -= 5; // Opponent has one piece
+      // If the line is completely blocked, skip it
+      if (aiPieces > 0 && opponentPieces > 0) {
+        // Blocked line, no points
+        continue;
+      }
+      
+      // If the AI has pieces in this line
+      if (aiPieces > 0) {
+        if (aiPieces === 3) {
+          // Winning line, highest priority
+          score += 1000;
+        } else if (aiPieces === 2 && emptySpaces === 1) {
+          // Two in a row with one empty space - almost winning
+          score += 100;
+        } else if (aiPieces === 1 && emptySpaces === 2) {
+          // One piece with two empty spaces - potential line
+          score += 10;
         }
       }
+      
+      // If the opponent has pieces in this line
+      if (opponentPieces > 0) {
+        if (opponentPieces === 3) {
+          // Opponent has already won (shouldn't happen in minimax, but just in case)
+          score -= 1000;
+        } else if (opponentPieces === 2 && emptySpaces === 1) {
+          // Opponent has two in a row - must block!
+          score -= 500; // Very high negative score to prioritize blocking
+        } else if (opponentPieces === 1 && emptySpaces === 2) {
+          // Opponent has one piece with two empty spaces
+          score -= 5;
+        }
+      }
+    }
+    
+    // Center control bonus
+    if (board[4] === this.player) {
+      score += 15;
+    } else if (board[4] !== null && board[4] !== this.player) {
+      score -= 15;
     }
     
     return score;

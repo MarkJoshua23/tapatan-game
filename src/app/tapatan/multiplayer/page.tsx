@@ -78,6 +78,15 @@ const MultiplayerGameContent: React.FC = () => {
         <div className="text-center text-gray-500 dark:text-gray-400 text-xs md:text-sm px-4">
           <p>Pass and Play mode: Two players take turns on the same device. Players alternate placing pieces, then moving them to form three in a row.</p>
         </div>
+        
+        <div className="w-full flex justify-center mt-6">
+          <a
+            href="/"
+            className="px-6 py-2.5 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200 font-medium shadow-sm"
+          >
+            Return to Menu
+          </a>
+        </div>
       </div>
     </div>
   );
