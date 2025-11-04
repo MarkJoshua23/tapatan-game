@@ -398,27 +398,6 @@ export const useGameStore = create<GameState>()((set, get) => ({
 5. **Middleware Support**: Easy to add logging, persistence, etc.
 ```
 
-### Reducer Pattern
-
-Game state transitions are managed through a reducer function that handles all possible actions:
-
-```typescript
-const gameReducer = (state: GameStatus, action: GameAction): GameStatus => {
-  switch (action.type) {
-    case 'MAKE_MOVE': {
-      // Handle piece placement or movement
-    }
-    case 'SELECT_CELL': {
-      // Handle piece selection in moving phase
-    }
-    case 'RESET_GAME': {
-      // Reset to initial state
-    }
-    default:
-      return state;
-  }
-};
-```
 
 ### Side Effects
 
