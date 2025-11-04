@@ -23,8 +23,12 @@ const CoinToss: React.FC<CoinTossProps> = ({ onResult }) => {
       setTimeout(() => {
         setIsFlipping(false);
         setShowResult(true);
-        onResult(flipResult);
-      }, 1500);
+        
+        // Delay the actual game start to show the result
+        setTimeout(() => {
+          onResult(flipResult);
+        }, 1000); // Wait 1 more second before transitioning to game
+      }, 4000); // Wait for animation to complete (should match CSS animation duration)
     }, 100);
   };
 
@@ -41,13 +45,23 @@ const CoinToss: React.FC<CoinTossProps> = ({ onResult }) => {
     <div className="flex flex-col items-center justify-center py-6">
       <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-6">Coin Toss</h3>
       
-      <div className="relative w-24 h-24 mb-6">
-        <div 
-          className={`w-full h-full rounded-full flex items-center justify-center text-white text-lg font-bold transition-all duration-300 ${
-            result === 'X' ? 'bg-blue-600' : result === 'O' ? 'bg-red-600' : 'bg-gray-400'
-          } ${isFlipping ? 'animate-spin' : ''}`}
+      <div className="relative w-24 h-24 mb-6 perspective-1000">
+        <div
+          className={`coin w-full h-full transition-all duration-300 transform-style-3d ${
+            isFlipping ? (result === 'O' ? 'animate-flip-O' : 'animate-flip-X') : ''
+          }`}
+          style={{
+            transform: isFlipping
+              ? (result === 'O' ? 'rotateY(1260deg)' : 'rotateY(1080deg)')
+              : result === 'O' ? 'rotateY(180deg)' : 'rotateY(0deg)',
+            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.3)'
+          }}
         >
-          {isFlipping ? '?' : result === 'X' ? 'X' : result === 'O' ? 'O' : '?'}
+          {/* Coin front - X side */}
+          <div className="absolute w-full h-full rounded-full bg-gradient-to-br from-blue-500 to-blue-700 backface-hidden"></div>
+          
+          {/* Coin back - O side */}
+          <div className="absolute w-full h-full rounded-full bg-gradient-to-br from-red-500 to-red-700 backface-hidden" style={{ transform: 'rotateY(180deg)' }}></div>
         </div>
       </div>
       
