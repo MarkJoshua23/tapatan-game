@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import GameBoard from '../../../components/Tapatan/GameBoard';
 import GameUI from '../../../components/Tapatan/GameUI';
 import { useGameStore } from '../../../stores/gameStore';
@@ -69,7 +69,9 @@ const MultiplayerGamePage: React.FC = () => {
         </header>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 mb-8">
-          <GameUI mode="multiplayer" />
+          <Suspense fallback={<div className="text-center text-gray-500">Loading...</div>}>
+            <GameUI mode="multiplayer" />
+          </Suspense>
           
           <div className="my-8 flex justify-center">
             <GameBoard

@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+
+import React, { Suspense, useEffect } from 'react';
 import GameBoard from '../../components/Tapatan/GameBoard';
 import GameUI from '../../components/Tapatan/GameUI';
 import { useGameStore } from '../../stores/gameStore';
@@ -91,7 +92,9 @@ const TapatanGamePage: React.FC = () => {
         </header>
 
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-5 md:p-6 mb-6">
-          <GameUI mode="singleplayer" />
+          <Suspense fallback={<div className="text-center text-gray-500">Loading...</div>}>
+            <GameUI mode="singleplayer" />
+          </Suspense>
           
           <div className="my-6 flex justify-center">
             <GameBoard

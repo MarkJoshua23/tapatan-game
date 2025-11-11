@@ -1,6 +1,7 @@
 import React from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import CoinToss from './CoinToss';
+import { useSearchParams } from 'next/navigation';
 
 interface GameUIProps {
   mode?: 'singleplayer' | 'multiplayer';
@@ -10,7 +11,7 @@ const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
   const state = useGameStore();
   const resetGame = useGameStore(state => state.resetGame);
   const startGame = useGameStore(state => state.startGame);
-
+  const searchParams = useSearchParams();
   const handleReset = () => {
     resetGame();
   };
@@ -36,17 +37,14 @@ const GameUI: React.FC<GameUIProps> = ({ mode = 'singleplayer' }) => {
  }
  
  // Get difficulty for singleplayer mode
- let difficultyText = '';
- if (mode === 'singleplayer') {
-   const urlParams = new URLSearchParams(window.location.search);
-   const difficulty = urlParams.get('difficulty') || 'medium';
-   const difficultyNames: Record<string, string> = {
-     'easy': 'Easy',
-     'medium': 'Medium',
-     'hard': 'Hard'
-   };
-   difficultyText = `Difficulty: ${difficultyNames[difficulty] || 'Medium'}`;
- }
+  const difficulty = searchParams.get('difficulty') || 'medium';
+  const difficultyNames: Record<string, string> = {
+    easy: 'Easy',
+    medium: 'Medium',
+    hard: 'Hard',
+  };
+  const difficultyText = `Difficulty: ${difficultyNames[difficulty] || 'Medium'}`;
+
 
   return (
     <div className="w-full max-w-md flex flex-col items-center gap-5">
