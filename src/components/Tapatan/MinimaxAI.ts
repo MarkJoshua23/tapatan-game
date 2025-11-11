@@ -2,9 +2,9 @@ import { BoardState, Player, GamePhase } from '../../types/tapatan';
 import { checkWinner, getGamePhase, getPossibleMoves } from '../../lib/game-logic';
 
 const DIFFICULTY_SETTINGS = {
-  easy: { depthLimit: 4, name: "Easy" },
-  medium: { depthLimit: 6, name: "Medium" },
-  hard: { depthLimit: 8, name: "Hard" }
+  easy: { depthLimit: 1, name: "Easy" },
+  medium: { depthLimit: 2, name: "Medium" },
+  hard: { depthLimit: 6, name: "Hard" }
 };
 
 export class MinimaxAI {
